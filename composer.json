@@ -1,0 +1,24 @@
+{
+    "name": "roiarthurb/openmole",
+    "description": "PHP wrapper to communicate with the OpenMole platform.",
+    "keywords": ["OpenMole", "NetLogo", "GAMA", "explore", "optimize", "numerical model", "grid"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Arthur Brugiere",
+            "email": "contact@arthurbrugiere.fr"
+        }
+    ],
+    "type": "library",
+    "require": {
+		"php": ">=7.1"
+    },
+    "require-dev": {
+		"phpunit/phpunit": "6.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "RoiArthurB\\OpenMole\\": "src/"
+        }
+    }
+}
