@@ -145,6 +145,42 @@ class OpenMole{
 	    return $result;
 	}
  
+ 	/*
+		+========
+		|   GET
+ 	 */
+ 	
+ 	/**
+ 	 * Return the state of a mole execution.
+ 	 * 
+ 	 * @param  string $id 	ID of your OpenMole task previously given by the server
+ 	 * @return JSON 		REST API result
+ 	 */
+ 	public function getJobs(){
+ 		return json_decode($this->callAPI("GET", $this->url . "/job/"));
+ 	}
+ 	
+ 	/**
+ 	 * Return the state of a mole execution.
+ 	 * 
+ 	 * @param  string $id 	ID of your OpenMole task previously given by the server
+ 	 * @return JSON 		REST API result
+ 	 */
+ 	public function getJobState(string $id){
+ 		return json_decode($this->callAPI("GET", $this->url . "/job/" . $id . "/state"));
+ 	}
+
+ 	/*
+		+========
+		|   POST
+ 	 */
+ 	
+ 
+ 	/*
+		+========
+		|   DELETE
+ 	 */
+
 	/**
 	* Sample method 
 	*
