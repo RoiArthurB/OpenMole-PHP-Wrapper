@@ -14,6 +14,16 @@ class OpenMole{
 
 	/*
 			+========
+			|   VARIABLES   |
+                    ========+
+	 */
+	
+	protected $apiURL;
+	protected $port;
+
+
+	/*
+			+========
 			|   SINGLETON   |
                     ========+
 	 */
@@ -36,8 +46,16 @@ class OpenMole{
 
 	/**
 	 * Protected construtor to prevent the creation of a new instance with the "new" keyword
+	 *
+	 * @param string $url URL of your OpenMole REST API
+	 * @param int $port The port use for your OpenMole REST API (default 8080)
+	 * 
+	 * @return Singleton instance
 	 */
-	protected function __construct() {}
+	protected function __construct($url, [$port = 8080]) {
+		$this->apiURL = $url;
+		$this->port = $port;
+	}
 
 	/**
 	 * Private clone function to prevent cloning the singleton instance
@@ -56,12 +74,9 @@ class OpenMole{
 
 	/*
 			+========
-			|      API      |
-                    ========+
+			|   API REFERENCE   |
+                        ========+
 	 */
-
-	 /**  @var string $m_SampleProperty define here what this variable is for, do this for every instance variable */
-	 private $m_SampleProperty = '';
  
 	/**
 	* Sample method 
