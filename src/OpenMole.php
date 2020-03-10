@@ -99,6 +99,51 @@ class OpenMole{
 			|   API REFERENCE   |
                         ========+
 	 */
+	
+    /**
+     * Helper to send request with libcurl
+     * based on response here : https://stackoverflow.com/a/9802854/6284933
+     * 
+     * @param  string  $method 	"POST", "DELETE" or "GET"
+     * @param  string  $url 	API REST endpoint
+     * @param  Array   $data 	Array with all the stuff you want to send
+     * 
+     * @return Array?			REST API result
+     */
+	protected function callAPI($method, $url, $data = null)
+	{
+	    $curl = curl_init();
+
+	    switch ($method)
+	    {
+	    	//	POST 	========
+	        case "POST":
+	            curl_setopt($curl, CURLOPT_POST, 1);
+
+	            if ($data)
+	                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+	            break;
+
+	    	//	DELETE 	========
+	        case "DELETE":
+	            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+	            break;
+
+	    	//	GET 	========
+	        default:
+	            if ($data)
+	                $url = sprintf("%s?%s", $url, http_build_query($data));
+	    }
+	    
+	    curl_setopt($curl, CURLOPT_URL, $url);
+	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+	    $result = curl_exec($curl);
+
+	    curl_close($curl);
+
+	    return $result;
+	}
  
 	/**
 	* Sample method 
