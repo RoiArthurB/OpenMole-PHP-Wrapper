@@ -3,7 +3,7 @@
 namespace RoiArthurB\OpenMole;
 
 /**
-*  A sample class
+*  PHP wrapper to communicate easily with the OpenMole REST API
 *
 *  Use this section to define what this class is doing, the PHPDocumentator will use this
 *  to automatically generate an API documentation using this information.
@@ -20,6 +20,8 @@ class OpenMole{
 	
 	protected $apiURL;
 	protected $port;
+	protected $https;
+	protected $url;
 
 
 	/*
@@ -29,32 +31,24 @@ class OpenMole{
 	 */
 
 	/**
-	 * Return instance of this class
-	 *
-	 * @static var Singleton $instance
-	 *
-	 * @return Singleton instance
-	 */
-	public static function getInstance() {
-		static $instance = null;
-		if (null === $instance) {
-				$instance = new static();
-		}
-
-		return $instance;
-	}
-
-	/**
 	 * Protected construtor to prevent the creation of a new instance with the "new" keyword
 	 *
-	 * @param string $url URL of your OpenMole REST API
-	 * @param int $port The port use for your OpenMole REST API (default 8080)
+	 * @param string $url 	URL of your OpenMole REST API (eg. demo.openmole.org)
+	 * @param int $port 	The port use for your OpenMole REST API (default `8080`)
+	 * @param bool $https 	Set at `true` if the OpenMole REST API is using HTTPS (default `false`)
 	 * 
 	 * @return Singleton instance
 	 */
-	protected function __construct($url, [$port = 8080]) {
+	protected function __construct(string $url, int $port = 8080, bool $https = false ) {
+		
 		$this->apiURL = $url;
 		$this->port = $port;
+		$this->https = $https;
+
+		// Pre-Construct full URL
+		$this->url = "http";
+		if ($https){ $this->url .= "s"; }
+		$this->url .= "://" . $url . ":" . $port;
 	}
 
 	/**
@@ -71,6 +65,34 @@ class OpenMole{
 	 */
 	private function __wakeup() {}
 
+	/**
+	 * Return instance of this class
+	 *
+	 * @static Singleton $instance var
+	 *
+	 * @param Array['url' => string, 'port' => int, 'https' => bool] $parameters URL is needed, Port and Https are optional
+	 *
+	 * @return Singleton instance
+	 */
+	public static function getInstance($parameters = null) {
+		static $instance = null;
+		if (null === $instance) {
+			switch (sizeof($parameters)) {
+				case 2:
+					$instance = new static($parameters['url'], $parameters['port']);
+					break;
+				case 3:
+					$instance = new static($parameters['url'], $parameters['port'], $parameters['https']);
+					break;
+				
+				default:
+					$instance = new static($parameters['url']);
+					break;
+			}
+		}
+
+		return $instance;
+	}
 
 	/*
 			+========
