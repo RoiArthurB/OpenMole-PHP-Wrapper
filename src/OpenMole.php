@@ -104,7 +104,7 @@ class OpenMole{
  
  	/*
 		+========
-		|   GET
+		|   GET Server
  	 */
  	
  	/**
@@ -116,6 +116,20 @@ class OpenMole{
  	public function getJobs(){
  		return json_decode($this->callAPI("GET", $this->url . "/job/"));
  	}
+
+ 	/**
+ 	 * List all user plugins loaded in OpenMOLE.
+ 	 * 
+ 	 * @return JSON 	List containing the name of the plugins and a boolean set to true if the plugin is properly loaded
+ 	 */
+ 	public function getPlugins(){
+ 		return json_decode($this->callAPI("GET", $this->url . "/plugin/"));
+ 	}
+ 
+ 	/*
+		+========
+		|   GET Job
+ 	 */
  	
  	/**
  	 * Return the state of a mole execution.
@@ -126,6 +140,34 @@ class OpenMole{
  	public function getJobState(string $id){
  		return json_decode($this->callAPI("GET", $this->url . "/job/" . $id . "/state"));
  	}
+
+ 	/**
+ 	 * Returns the output of a mole execution as a multi-dimensionnal Array (CSV export)
+ 	 * 
+ 	 * @param  string 		$id 	ID of your OpenMole task previously given by the server
+ 	 * @return Array[Array] 		Output grid of the job
+ 	 */
+ 	public function getJobOutput(string $id){
+ 		$result = [];
+
+ 		// Launch request
+ 		$reqResult = $this->callAPI("GET", $this->url . "/job/" . $id . "/output");
+ 		
+ 		// Turn line in array
+ 		$reqResult = explode("\n", $reqResult); 
+ 		array_pop($reqResult); // Remove last buggy line
+
+ 		// Turn every line in real array
+ 		foreach ($reqResult as $key => $line) {
+ 			$result[] = explode(",", $line);
+ 		}
+
+ 		// Return Array[Array[string]]
+ 		return $result;
+ 	}
+
+	// GET /job/:id/output - returns the output of a mole execution as a string. It has the following parameters: 
+	// GET /job/:id/workDirectory/:file - download a file or a directory from the server. It returns the gunziped content of the file or a tar.gz archive of the directory. It has the following parameters: 
 
  	/*
 		+========
