@@ -26,12 +26,12 @@ class OpenMole{
 
 	/*
 			+========
-			|   SINGLETON   |
-                    ========+
+			|   DEFAULT FUNCTION   |
+                           ========+
 	 */
 
 	/**
-	 * Protected construtor to prevent the creation of a new instance with the "new" keyword
+	 * Construtor
 	 *
 	 * @param string $url 	URL of your OpenMole REST API (eg. demo.openmole.org)
 	 * @param int $port 	The port use for your OpenMole REST API (default `8080`)
@@ -39,7 +39,7 @@ class OpenMole{
 	 * 
 	 * @return Singleton instance
 	 */
-	protected function __construct(string $url, int $port = 8080, bool $https = false ) {
+	public function __construct(string $url, int $port = 8080, bool $https = false ) {
 		
 		$this->apiURL = $url;
 		$this->port = $port;
@@ -49,49 +49,6 @@ class OpenMole{
 		$this->url = "http";
 		if ($https){ $this->url .= "s"; }
 		$this->url .= "://" . $url . ":" . $port;
-	}
-
-	/**
-	 * Private clone function to prevent cloning the singleton instance
-	 *
-	 * @return void
-	 */
-	private function __clone() {}
-
-	/**
-	 * Private unserialize function to prevent cloning the singleton instance
-	 *
-	 * @return void
-	 */
-	private function __wakeup() {}
-
-	/**
-	 * Return instance of this class
-	 *
-	 * @static Singleton $instance var
-	 *
-	 * @param Array['url' => string, 'port' => int, 'https' => bool] $parameters URL is needed, Port and Https are optional
-	 *
-	 * @return Singleton instance
-	 */
-	public static function getInstance($parameters = null) {
-		static $instance = null;
-		if (null === $instance) {
-			switch (sizeof($parameters)) {
-				case 2:
-					$instance = new static($parameters['url'], $parameters['port']);
-					break;
-				case 3:
-					$instance = new static($parameters['url'], $parameters['port'], $parameters['https']);
-					break;
-				
-				default:
-					$instance = new static($parameters['url']);
-					break;
-			}
-		}
-
-		return $instance;
 	}
 
 	/*
