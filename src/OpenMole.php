@@ -91,7 +91,7 @@ class OpenMole{
 	            if ($data)
 	                $url = sprintf("%s?%s", $url, http_build_query($data));
 	    }
-	    
+
 	    curl_setopt($curl, CURLOPT_URL, $url);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 
@@ -166,7 +166,21 @@ class OpenMole{
  		return $result;
  	}
 
-	// GET /job/:id/output - returns the output of a mole execution as a string. It has the following parameters: 
+ 	/**
+ 	 * Download a file or a directory from the server
+ 	 * WIP function
+ 	 * 
+ 	 * @param  string $id       ID of your OpenMole task previously given by the server
+ 	 * @param  string $fileName Name of the file you want to download
+ 	 * @return file 			Requested file
+ 	 */
+ 	public function getJobFile(string $id, string $fileName){
+
+		//Have to talk with OpenMole staff for this one
+		return $this->callAPI("GET", $this->url . "/job/" . $id . "/workDirectory/" . $fileName);
+
+ 	}
+
 	// GET /job/:id/workDirectory/:file - download a file or a directory from the server. It returns the gunziped content of the file or a tar.gz archive of the directory. It has the following parameters: 
 
  	/*
