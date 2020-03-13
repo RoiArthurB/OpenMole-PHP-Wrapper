@@ -10,7 +10,7 @@ namespace RoiArthurB\OpenMole;
 *
 *  @author RoiArthurB
 */
-class OpenMole{
+class OpenMole {
 
 	/*
 			+========
@@ -64,6 +64,7 @@ class OpenMole{
      * @param  string  $method 	"POST", "DELETE" or "GET"
      * @param  string  $url 	API REST endpoint
      * @param  Array   $data 	Array with all the stuff you want to send
+     *                        	Every dic. key name (with POST method) starting by `up_` will be uploaded and rename without this header
      * 
      * @return Array?			REST API result
      */
@@ -77,8 +78,22 @@ class OpenMole{
 	        case "POST":
 	            curl_setopt($curl, CURLOPT_POST, 1);
 
-	            if ($data)
-	                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+	            if ($data){
+	            	$postArray = [];
+	            	foreach ($data as $key => $value) {
+
+	            		if (explode("_", $key)[0] == "up"){	// File to upload in the POST request
+							$cfile = curl_file_create($value); // Create CURLFile object with path value
+
+							// Assign POST data
+							$postArray[explode("_", $key)[1]] = $cfile;
+	            		}else{
+	            			$postArray[$key] = $value;
+	            		}
+	            	}
+	                curl_setopt($curl, CURLOPT_POSTFIELDS, $postArray);
+
+	            }
 	            break;
 
 	    	//	DELETE 	========
@@ -87,6 +102,7 @@ class OpenMole{
 	            break;
 
 	    	//	GET 	========
+	        // Never used for now, but ready to be used
 	        default:
 	            if ($data)
 	                $url = sprintf("%s?%s", $url, http_build_query($data));
@@ -181,30 +197,51 @@ class OpenMole{
 
  	}
 
-	// GET /job/:id/workDirectory/:file - download a file or a directory from the server. It returns the gunziped content of the file or a tar.gz archive of the directory. It has the following parameters: 
-
  	/*
 		+========
 		|   POST
  	 */
+
+ 	//  POST /plugin - load one or several plugins in OpenMOLE. It has the following parameter: 
+ 	
+ 	/**
+ 	 * Start a mole execution
+ 	 * Will automatically compress the given workspace, upload it and send it to your OpenMole server
+ 	 * 
+ 	 * @param  string $workspacePath Absolute path to the OM work directory
+ 	 * @param  string $omsFileName   Relative path of the oms in the work directory
+ 	 * @return Array                 API result on success or fail
+ 	 */
+ 	public function postStartJob(string $workspacePath, string $omsFileName){
+
+ 		do { // Get random unique archive name
+	 		$archivePath = $workspacePath . "/../archive" . rand() . ".tar";
+ 		} while ( file_exists($archivePath) );
+
+ 		$archive = new \PharData($archivePath);
+ 		$archive->buildFromDirectory($workspacePath);
+		$archive->compress(\Phar::GZ);
+
+		$result = $this->callAPI("POST", $this->url . "/job", ["script" => $omsFileName, "up_workDirectory" => $archivePath . ".gz"]);
+
+		// Cleaning uncompressed archive
+ 		if (file_exists($archivePath)){
+ 			unlink($archivePath);
+
+ 			// Cleaning compressed archive
+ 			unlink($archivePath . ".gz");
+ 		}		
+
+		return json_decode($result);
+
+ 	}
  	
  
  	/*
 		+========
 		|   DELETE
  	 */
-
-	/**
-	* Sample method 
-	*
-	* Always create a corresponding docblock for each method, describing what it is for,
-	* this helps the phpdocumentator to properly generator the documentation
-	*
-	* @param string $param1 A string containing the parameter, do this for each parameter to the function, make sure to make it descriptive
-	*
-	* @return string
-	*/
-	 public function method1($param1){
-			return "Hello World";
-	 }
+ 	
+ 	// DELETE /job/:id - cancel and remove an execution from the server. It has the following parameters: 
+	//  DELETE /plugin - unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well. It has the following parameter: 
 }
