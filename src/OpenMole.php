@@ -242,6 +242,15 @@ class OpenMole {
 		|   DELETE
  	 */
  	
- 	// DELETE /job/:id - cancel and remove an execution from the server. It has the following parameters: 
+ 	/**
+ 	 * Cancel and remove an execution from the server
+ 	 * 
+ 	 * @param  string $id The id of the mole execution
+ 	 * @return bool       If the request has been send or not
+ 	 */
+ 	public function deleteJob(string $id){
+		return $this->callAPI("DELETE", $this->url . "/job/" . $id ) or false;
+ 	}
+ 	
 	//  DELETE /plugin - unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well. It has the following parameter: 
 }
