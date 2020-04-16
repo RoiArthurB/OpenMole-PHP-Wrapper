@@ -77,23 +77,6 @@ class OpenMole {
 	    	//	POST 	========
 	        case "POST":
 	            curl_setopt($curl, CURLOPT_POST, 1);
-
-	            if ($data){
-	            	$postArray = [];
-	            	foreach ($data as $key => $value) {
-
-	            		if (explode("_", $key)[0] == "up"){	// File to upload in the POST request
-							$cfile = curl_file_create($value); // Create CURLFile object with path value
-
-							// Assign POST data
-							$postArray[explode("_", $key)[1]] = $cfile;
-	            		}else{
-	            			$postArray[$key] = $value;
-	            		}
-	            	}
-	                curl_setopt($curl, CURLOPT_POSTFIELDS, $postArray);
-
-	            }
 	            break;
 
 	    	//	DELETE 	========
@@ -107,6 +90,23 @@ class OpenMole {
 	            if ($data)
 	                $url = sprintf("%s?%s", $url, http_build_query($data));
 	    }
+
+	    // Set POST parameters inr request
+        if ($data){
+        	$postArray = [];
+        	foreach ($data as $key => $value) {
+
+        		if (explode("_", $key)[0] == "up"){	// File to upload in the POST request
+					$cfile = curl_file_create($value); // Create CURLFile object with path value
+
+					// Assign POST data
+					$postArray[explode("_", $key)[1]] = $cfile;
+        		}else{
+        			$postArray[$key] = $value;
+        		}
+        	}
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $postArray);
+        }
 
 	    curl_setopt($curl, CURLOPT_URL, $url);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -292,4 +292,20 @@ class OpenMole {
  	}
  	
 	//  DELETE /plugin - unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well. It has the following parameter: 
+	 
+	/**
+	 * Unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well.
+	 * 
+	 * @param  string $pluginName 	The name of an OpenMOLE plugin
+ 	 * @return bool   			    If the request has been send or not
+	 */
+ 	public function deletePlugin(string $pluginName){
+ 		$result;
+ 		try {
+ 			$result= $this->callAPI("DELETE", $this->url . "/plugin", ["name" => $pluginName] );
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
+ 	}
 }
