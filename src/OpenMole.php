@@ -84,6 +84,11 @@ class OpenMole {
 	            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
 	            break;
 
+	        //  PROPFIND =======
+	        case "PROPFIND":
+	            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
+	            break;
+
 	    	//	GET 	========
 	        // Never used for now, but ready to be used
 	        default:
@@ -317,6 +322,34 @@ class OpenMole {
  		$result;
  		try {
  			$result= $this->callAPI("DELETE", $this->url . "/plugin", ["name" => $pluginName] );
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
+ 	}
+
+ 	/*
+		+========
+		|   PROPFIND
+ 	 */
+ 	
+	/**
+	 * Get info of a file or a directory from the server.
+	 * 
+	 * @param  string      $id      The id of the mole execution
+	 * @param  string      $path	The relative path to the directory to list in the workspace
+	 * @param  int|integer $last    (optional) An integer to list only the last n files.
+	 * 
+	 * @return JSON                	Listing of every files in the folder with attributes [name, type, modified, size]
+	 */
+ 	public function listDirectory(string $id, string $path, int $last = -1){
+ 		$result;
+ 		try {
+ 			if($last != -1){
+ 				$result= $this->callAPI("PROPFIND", $this->url . "/job/" . $id . "/workDirectory/" . $path, ["last" => $last] );
+ 			}else{
+ 				$result= $this->callAPI("PROPFIND", $this->url . "/job/" . $id . "/workDirectory/" . $path);
+ 			}
  		} catch (Exception $e) {
  			$result= $e;
  		}
