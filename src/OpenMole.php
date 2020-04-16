@@ -130,7 +130,13 @@ class OpenMole {
  	 * @return JSON 		REST API result
  	 */
  	public function getJobs(){
- 		return json_decode($this->callAPI("GET", $this->url . "/job/"));
+ 		$result;
+ 		try {
+			$result = json_decode($this->callAPI("GET", $this->url . "/job/"));
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
  	}
 
  	/**
@@ -139,7 +145,13 @@ class OpenMole {
  	 * @return JSON 	List containing the name of the plugins and a boolean set to true if the plugin is properly loaded
  	 */
  	public function getPlugins(){
- 		return json_decode($this->callAPI("GET", $this->url . "/plugin/"));
+ 		$result;
+ 		try {
+			$result = json_decode($this->callAPI("GET", $this->url . "/plugin/"));
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
  	}
  
  	/*
@@ -154,7 +166,13 @@ class OpenMole {
  	 * @return JSON 		REST API result
  	 */
  	public function getJobState(string $id){
- 		return json_decode($this->callAPI("GET", $this->url . "/job/" . $id . "/state"));
+ 		$result;
+ 		try {
+			$result = json_decode($this->callAPI("GET", $this->url . "/job/" . $id . "/state"));
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
  	}
 
  	/**
@@ -166,19 +184,25 @@ class OpenMole {
  	public function getJobOutput(string $id){
  		$result = [];
 
- 		// Launch request
- 		$reqResult = $this->callAPI("GET", $this->url . "/job/" . $id . "/output");
- 		
- 		// Turn line in array
- 		$reqResult = explode("\n", $reqResult); 
- 		array_pop($reqResult); // Remove last buggy line
+ 		try {
+	 		// Launch request
+	 		$reqResult = $this->callAPI("GET", $this->url . "/job/" . $id . "/output");
+	 		
+	 		// Turn line in array
+	 		$reqResult = explode("\n", $reqResult); 
+	 		array_pop($reqResult); // Remove last buggy line
 
- 		// Turn every line in real array
- 		foreach ($reqResult as $key => $line) {
- 			$result[] = explode(",", $line);
+	 		// Turn every line in real array
+	 		foreach ($reqResult as $key => $line) {
+	 			$result[] = explode(",", $line);
+	 		}
+ 			
+ 			// will Return Array[Array[string]]
+ 		
+ 		} catch (Exception $e) {
+ 			$result= $e;
  		}
 
- 		// Return Array[Array[string]]
  		return $result;
  	}
 
@@ -191,10 +215,14 @@ class OpenMole {
  	 * @return file 			Requested file
  	 */
  	public function getJobFile(string $id, string $fileName){
-
 		//Have to talk with OpenMole staff for this one
-		return $this->callAPI("GET", $this->url . "/job/" . $id . "/workDirectory/" . $fileName);
-
+ 		$result;
+ 		try {
+			$result = $this->callAPI("GET", $this->url . "/job/" . $id . "/workDirectory/" . $fileName);
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+		return $result;
  	}
 
  	/*
@@ -222,7 +250,12 @@ class OpenMole {
  		$archive->buildFromDirectory($workspacePath);
 		$archive->compress(\Phar::GZ);
 
-		$result = $this->callAPI("POST", $this->url . "/job", ["script" => $omsFileName, "up_workDirectory" => $archivePath . ".gz"]);
+ 		$result;
+ 		try {
+			$result = $this->callAPI("POST", $this->url . "/job", ["script" => $omsFileName, "up_workDirectory" => $archivePath . ".gz"]);
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
 
 		// Cleaning uncompressed archive
  		if (file_exists($archivePath)){
@@ -249,7 +282,13 @@ class OpenMole {
  	 * @return bool       If the request has been send or not
  	 */
  	public function deleteJob(string $id){
-		return $this->callAPI("DELETE", $this->url . "/job/" . $id ) or false;
+ 		$result;
+ 		try {
+ 			$result= $this->callAPI("DELETE", $this->url . "/job/" . $id );
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+ 		return $result;
  	}
  	
 	//  DELETE /plugin - unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well. It has the following parameter: 
