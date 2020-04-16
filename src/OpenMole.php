@@ -229,8 +229,6 @@ class OpenMole {
 		+========
 		|   POST
  	 */
-
- 	//  POST /plugin - load one or several plugins in OpenMOLE. It has the following parameter: 
  	
  	/**
  	 * Start a mole execution
@@ -268,6 +266,24 @@ class OpenMole {
 		return json_decode($result);
 
  	}
+
+ 	/**
+ 	 *  Load one plugin in OpenMOLE.
+ 	 * 
+ 	 * @param  string $omPluginFileName Relative path of the oms in the work directory
+ 	 * @return Array                 	API result on success or fail
+ 	 */
+ 	public function postUploadPlugin(string $omPluginFileName){
+
+ 		$result;
+ 		try {
+			$result = $this->callAPI("POST", $this->url . "/plugin", ["up_file" => $omPluginFileName]);
+ 		} catch (Exception $e) {
+ 			$result= $e;
+ 		}
+
+		return $result;
+ 	}
  	
  
  	/*
@@ -290,8 +306,6 @@ class OpenMole {
  		}
  		return $result;
  	}
- 	
-	//  DELETE /plugin - unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well. It has the following parameter: 
 	 
 	/**
 	 * Unload (and remove) one or several plugins in OpenMOLE. Depending plugin are unloaded as well.
